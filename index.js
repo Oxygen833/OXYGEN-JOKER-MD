@@ -338,7 +338,7 @@ async function startXeonBotInc() {
           }
           console['\u006C\u006F\u0067'](chalk['\u0079\u0065\u006C\u006C\u006F\u0077\u0042\u0072\u0069\u0067\u0068\u0074'](`\n📱 status post by ${_0x7cf3g} at ${_0x5_0x04d}`));
           await handleStatusUpdate(_0x3ea4f, chatUpdate);
-          console['\u006C\u006F\u0067'](chalk['\u0067\u0072\u0065\u0065\u006E\u0042\u0072\u0069\u0067\u0068\u0074'](`👁️ [AUTO-VIEW SUCCESS] Bot viewed & processed status from ${_0x7cf3g}\n`));
+          console['\u006C\u006F\u0067'](chalk['\u0067\u0072\u0065\u0065\u006E\u0042\u0072\u0069\u0067\u0068\u0074'](`👁️ [USE . AUTOSTATUS ON] for Bot to automatically viewed & processed status from ${_0x7cf3g}\n`));
           return;
         }
         if (!_0xf2775b || isSystemJid(_0xf2775b)) return;
