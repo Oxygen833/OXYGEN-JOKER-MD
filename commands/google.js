@@ -1,42 +1,41 @@
 const axios = require('axios');
 
-// Your live Railway SearXNG URL
-const SEARXNG_URL = 'https://searxng-production-e2a9.up.railway.app';
+/**
+ * 🤡🃏 𝐈 𝐀𝐌 𝐉𝐎𝐊𝐄 🃏🤡 - Google Search Command
+ * Powered by David Cyril API
+ */
 
 async function googleCommand(sock, chatId, message, args) {
     try {
         if (!args || args.length === 0) {
             return await sock.sendMessage(chatId, { 
-                text: "❌ *Please provide a search query.*\n\n*Usage:*\n• `*google <search query>`" 
+                text: "❌ *Please provide a search query.*\n\n*Usage:*\n• `.google <search query>`" 
             }, { quoted: message });
         }
 
         await sock.sendMessage(chatId, { react: { text: '🔍', key: message.key } });
 
         const query = args.join(' ');
+        const apiUrl = `https://apis.davidcyril.name.ng/search/google?q=${encodeURIComponent(query)}`;
 
-        // Request clean JSON from your private Railway instance
-        const response = await axios.get(`${SEARXNG_URL}/search`, {
-            params: {
-                q: query,
-                format: 'json'
-            },
+        const { data } = await axios.get(apiUrl, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
             },
-            timeout: 10000
+            timeout: 15000
         });
 
-        const results = response.data?.results;
+        // Extract results array dynamically depending on JSON payload structure
+        const results = Array.isArray(data) ? data : (data?.results || data?.result || data?.data);
 
-        if (!results || results.length === 0) {
+        if (!results || !Array.isArray(results) || results.length === 0) {
             await sock.sendMessage(chatId, { react: { text: '❌', key: message.key } });
             return await sock.sendMessage(chatId, { 
                 text: `❌ *No search results found for:* "${query}"` 
             }, { quoted: message });
         }
 
-        // Get top 5 results
+        // Take top 5 search results
         const topResults = results.slice(0, 5);
 
         let resultText = `🔍 *【 GOOGLE SEARCH RESULTS 】*\n\n`;
@@ -44,22 +43,22 @@ async function googleCommand(sock, chatId, message, args) {
         resultText += `───────────────────\n\n`;
 
         topResults.forEach((item, index) => {
-            const title = item.title || 'No Title';
-            const snippet = item.content || item.snippet || 'No snippet available.';
-            const url = item.url || item.link || '#';
+            const title = item.title || item.heading || 'No Title';
+            const snippet = item.snippet || item.description || item.content || 'No snippet available.';
+            const url = item.url || item.link || item.href || '#';
 
             resultText += `*${index + 1}. ${title}*\n`;
             resultText += `📖 ${snippet}\n`;
             resultText += `🔗 ${url}\n\n`;
         });
 
-        resultText += `🤡 *JOKER BOT*`;
+        resultText += `> *_Powered by 🤡𝙄 𝙖𝙢 𝙟𝙤𝙠𝙚𝙧!🤡_*`;
 
         await sock.sendMessage(chatId, { react: { text: '✅', key: message.key } });
         await sock.sendMessage(chatId, { text: resultText }, { quoted: message });
 
     } catch (err) {
-        console.error('❌ SearXNG Search Error:', err.message || err);
+        console.error('❌ Google Search Error:', err.message || err);
         await sock.sendMessage(chatId, { react: { text: '❌', key: message.key } });
         await sock.sendMessage(chatId, { 
             text: "❌ *Failed to fetch search results. Please try again later.*" 
